@@ -1,0 +1,49 @@
+use crate::domain::board::Board;
+use crate::domain::card::{Card, HAND_SIZE};
+use crate::domain::game::GameResult::{GameWin, InProgress, PlayerWin};
+use crate::domain::player::Player;
+
+pub enum GameResult {
+    PlayerWin,
+    GameWin,
+    InProgress,
+}
+
+pub struct Game {
+    player: Player,
+    board: Board,
+}
+
+impl Game {
+    pub fn new(player_name: String) -> Game {
+        let mut player = Player::new(player_name);
+        let mut board = Board::new();
+
+        let cards = board.deal_hand(8);
+
+        player.add_cards(cards);
+
+        Game { player, board }
+    }
+
+    pub fn play_card(&mut self, card: u8, pile: usize) -> Result<(), String> {
+        self.board.play_card(Card(card), pile)
+    }
+
+    pub fn finnish_turn(&mut self) -> GameResult {
+        let cards_needed = HAND_SIZE - self.player.get_cards().len();
+
+        let new_cards = self.board.deal_hand(cards_needed);
+        self.player.add_cards(new_cards);
+
+        if self.player.get_cards().len() == 0 {
+            return PlayerWin;
+        }
+
+        if !self.board.any_move_available(self.player.get_cards()) {
+            return GameWin;
+        }
+
+        InProgress
+    }
+}
