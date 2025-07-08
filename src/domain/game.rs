@@ -36,7 +36,11 @@ impl Game {
         let new_cards = self.board.deal_hand(cards_needed);
         self.player.add_cards(new_cards);
 
-        if self.player.get_cards().len() == 0 {
+        self.current_status()
+    }
+
+    fn current_status(&mut self) -> GameResult {
+        if self.player.get_cards().len() == 0 && self.board.missing_cards().len() == 0 {
             return PlayerWin;
         }
 

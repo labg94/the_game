@@ -35,6 +35,9 @@ impl Board{
         self.piles.iter().any(|p| cards.iter().any(|c| p.can_play_card(*c)))
     }
     
+    pub fn missing_cards(&self) -> Vec<Card>{
+        self.deck.clone()
+    }
     
 }
 
