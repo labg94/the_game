@@ -1,5 +1,5 @@
 use crate::domain::board::Board;
-use crate::domain::card::{Card, HAND_SIZE};
+use crate::domain::card::{Card, Pile, HAND_SIZE};
 use crate::domain::game::GameResult::{GameWin, InProgress, PlayerWin};
 use crate::domain::player::Player;
 
@@ -50,4 +50,9 @@ impl Game {
 
         InProgress
     }
+    
+    fn show_piles(&self) -> [Pile; 4] {
+        self.board.piles()
+    }
+    
 }

@@ -5,13 +5,13 @@ pub const HAND_SIZE: usize = 8;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Card(pub u8);
 
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub enum PileDirection {
     Ascending,
     Descending,
 }
 
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct Pile {
     pub direction: PileDirection,
     pub top: Card,
