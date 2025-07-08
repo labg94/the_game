@@ -1,8 +1,9 @@
 use crate::domain::board::Board;
-use crate::domain::card::{Card, Pile, HAND_SIZE};
+use crate::domain::card::{Card, HAND_SIZE, Pile};
 use crate::domain::game::GameResult::{GameWin, InProgress, PlayerWin};
 use crate::domain::player::Player;
 
+#[derive(Debug, PartialEq)]
 pub enum GameResult {
     PlayerWin,
     GameWin,
@@ -10,8 +11,8 @@ pub enum GameResult {
 }
 
 pub struct Game {
-    player: Player,
-    board: Board,
+    pub player: Player,
+    pub board: Board,
 }
 
 impl Game {
@@ -27,6 +28,7 @@ impl Game {
     }
 
     pub fn play_card(&mut self, card: u8, pile: usize) -> Result<(), String> {
+        self.player.play_card(Card(card));
         self.board.play_card(Card(card), pile)
     }
 
@@ -39,7 +41,7 @@ impl Game {
         self.current_status()
     }
 
-    fn current_status(&mut self) -> GameResult {
+    pub fn current_status(&mut self) -> GameResult {
         if self.player.get_cards().len() == 0 && self.board.missing_cards().len() == 0 {
             return PlayerWin;
         }
@@ -50,9 +52,8 @@ impl Game {
 
         InProgress
     }
-    
-    fn show_piles(&self) -> [Pile; 4] {
+
+    pub fn show_piles(&self) -> [Pile; 4] {
         self.board.piles()
     }
-    
 }
