@@ -13,6 +13,7 @@ pub enum GameResult {
 pub struct Game {
     pub player: Player,
     pub board: Board,
+    movements_count: u8,
 }
 
 impl Game {
@@ -24,15 +25,27 @@ impl Game {
 
         player.add_cards(cards);
 
-        Game { player, board }
+        Game { player, board, movements_count:0 }
     }
 
     pub fn play_card(&mut self, card: u8, pile: usize) -> Result<(), String> {
+        self.board.play_card(Card(card), pile)?;
         self.player.play_card(Card(card));
-        self.board.play_card(Card(card), pile)
+        self.movements_count += 1;
+        Ok(())
     }
 
+    pub fn can_finish_turn(&self) -> bool {
+        let min_movements = if self.board.missing_cards().len() == 0 {1} else {2};
+        self.movements_count >= min_movements
+    }
+    
+    
     pub fn finnish_turn(&mut self) -> GameResult {
+        if self.lose_condition() {
+            return GameWin;
+        }
+        
         let cards_needed = HAND_SIZE - self.player.get_cards().len();
 
         let new_cards = self.board.deal_hand(cards_needed);
@@ -41,12 +54,16 @@ impl Game {
         self.current_status()
     }
 
+    fn lose_condition(&mut self) -> bool {
+        !self.can_finish_turn() && !self.board.any_move_available(self.player.get_cards())
+    }
+
     pub fn current_status(&mut self) -> GameResult {
         if self.player.get_cards().len() == 0 && self.board.missing_cards().len() == 0 {
             return PlayerWin;
         }
 
-        if !self.board.any_move_available(self.player.get_cards()) {
+        if self.lose_condition() {
             return GameWin;
         }
 

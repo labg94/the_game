@@ -1,12 +1,11 @@
-use inquire::Text;
 use crate::domain::game::{Game, GameResult};
+use inquire::Text;
 
 mod domain;
 
-
-use inquire::{Select};
-use colored::Colorize;
 use crate::domain::card::{Card, Pile, PileDirection};
+use colored::Colorize;
+use inquire::Select;
 
 fn show_game_state(player_cards: &Vec<Card>, piles: &[Pile; 4]) {
     println!("\n{}", "=== Current Game State ===".cyan().bold());
@@ -30,18 +29,27 @@ fn show_game_state(player_cards: &Vec<Card>, piles: &[Pile; 4]) {
 }
 
 fn play_turn(game: &mut Game) {
-    while game.current_status() == GameResult::InProgress  {
+    while game.current_status() == GameResult::InProgress {
         show_game_state(&game.player.get_cards(), &game.show_piles());
 
         let actions = vec!["Play Card", "End Turn"];
-        let choice = Select::new("What would you like to do?", actions)
-            .prompt()
-            .expect("Failed to select action");
+
+
+        let choice = if game.can_finish_turn() {
+            let choice = Select::new("What would you like to do?", actions)
+                .prompt()
+                .expect("Failed to select action");
+            choice
+        } else {
+            "Play Card"
+        };
 
         match choice {
             "Play Card" => {
                 // Convert cards to strings for selection
-                let card_options: Vec<String> = game.player.get_cards()
+                let card_options: Vec<String> = game
+                    .player
+                    .get_cards()
                     .iter()
                     .map(|c| c.0.to_string())
                     .collect();
@@ -52,7 +60,8 @@ fn play_turn(game: &mut Game) {
                     .expect("Failed to select card");
 
                 // Create pile options with their direction and top card
-                let pile_options: Vec<String> = game.show_piles()
+                let pile_options: Vec<String> = game
+                    .show_piles()
                     .iter()
                     .enumerate()
                     .map(|(i, p)| {
@@ -85,14 +94,20 @@ fn play_turn(game: &mut Game) {
                     println!("{}", e.bright_red());
                 }
             }
-            "End Turn" => { game.finnish_turn(); },
-            _ => {println!("Invalid action");}
+            "End Turn" => {
+                game.finnish_turn();
+            }
+            _ => {
+                println!("Invalid action");
+            }
         }
     }
 }
 
 fn main() {
-    let name = Text::new("What is your name?").prompt().expect("Failed to get name");
+    let name = Text::new("What is your name?")
+        .prompt()
+        .expect("Failed to get name");
 
     let mut game = Game::new(name);
 
@@ -101,13 +116,16 @@ fn main() {
 
         play_turn(&mut game);
     }
-    
+
     match game.current_status() {
-        GameResult::PlayerWin => {println!("You win!")}
-        GameResult::GameWin => {println!("The game win!")}
-        GameResult::InProgress => {println!("you should be playing")}
+        GameResult::PlayerWin => {
+            println!("You win!")
+        }
+        GameResult::GameWin => {
+            println!("The game win!")
+        }
+        GameResult::InProgress => {
+            println!("you should be playing")
+        }
     }
-    
 }
-
-
