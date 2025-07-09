@@ -2,6 +2,7 @@ use crate::domain::card::{Card, Pile};
 use rand::seq::SliceRandom;
 use rand::rng;
 
+#[derive(Debug)]
 pub struct Board {
     piles: [Pile;4],
     deck: Vec<Card>,

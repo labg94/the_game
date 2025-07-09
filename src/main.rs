@@ -117,6 +117,7 @@ fn main() {
         play_turn(&mut game);
     }
 
+    show_game_state(&game.player.get_cards(), &game.show_piles());
     match game.current_status() {
         GameResult::PlayerWin => {
             println!("You win!")

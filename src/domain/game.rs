@@ -10,6 +10,7 @@ pub enum GameResult {
     InProgress,
 }
 
+#[derive(Debug)]
 pub struct Game {
     pub player: Player,
     pub board: Board,
@@ -25,7 +26,11 @@ impl Game {
 
         player.add_cards(cards);
 
-        Game { player, board, movements_count:0 }
+        Game {
+            player,
+            board,
+            movements_count: 0,
+        }
     }
 
     pub fn play_card(&mut self, card: u8, pile: usize) -> Result<(), String> {
@@ -36,21 +41,22 @@ impl Game {
     }
 
     pub fn can_finish_turn(&self) -> bool {
-        let min_movements = if self.board.missing_cards().len() == 0 {1} else {2};
+        let min_movements = if self.board.missing_cards().len() == 0 {
+            1
+        } else {
+            2
+        };
         self.movements_count >= min_movements
     }
-    
-    
+
     pub fn finnish_turn(&mut self) -> GameResult {
-        if self.lose_condition() {
-            return GameWin;
-        }
+        self.movements_count = 0;
         
         let cards_needed = HAND_SIZE - self.player.get_cards().len();
 
         let new_cards = self.board.deal_hand(cards_needed);
         self.player.add_cards(new_cards);
-
+        
         self.current_status()
     }
 
@@ -72,5 +78,31 @@ impl Game {
 
     pub fn show_piles(&self) -> [Pile; 4] {
         self.board.piles()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_game_win() {
+        let mut game = Game::new("Player".to_string());
+        game.play_card(99, 0).unwrap();
+        game.play_card(98, 1).unwrap();
+        game.play_card(2, 2).unwrap();
+        game.play_card(3, 3).unwrap();
+        game.finnish_turn();
+
+        
+        assert!(!game.can_finish_turn(), "should not be able to finish turn");
+        assert!(game.lose_condition(), "should lose condition");
+        
+        assert_eq!(
+            game.current_status(),
+            GameWin,
+            "Game should be over {:#?}",
+            game
+        );
     }
 }

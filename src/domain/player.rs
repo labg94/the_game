@@ -1,5 +1,6 @@
 use crate::domain::card::Card;
 
+#[derive(Debug)]
 pub struct Player {
     name: String,
     cards: Vec<Card>,
