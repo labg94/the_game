@@ -22,8 +22,8 @@ fn show_game_state(player_cards: &Vec<Card>, piles: &[Pile; 4]) {
 
     // Show player's cards
     println!("\n{}", "Your Cards:".green().bold());
-    for (i, card) in player_cards.iter().enumerate() {
-        println!("{}. {}", i + 1, card.0);
+    for card in player_cards.iter() {
+        print!(" ({})", card.0);
     }
     println!();
 }
@@ -112,18 +112,16 @@ fn main() {
     let mut game = Game::new(name);
 
     while game.current_status() == GameResult::InProgress {
-        show_game_state(&game.player.get_cards(), &game.show_piles());
-
         play_turn(&mut game);
     }
 
     show_game_state(&game.player.get_cards(), &game.show_piles());
     match game.current_status() {
         GameResult::PlayerWin => {
-            println!("You win!")
+            println!("{} {}",game.player.get_name()," You win!".bright_green())
         }
         GameResult::GameWin => {
-            println!("The game win!")
+            println!("{}","The game win!".bright_red())
         }
         GameResult::InProgress => {
             println!("you should be playing")

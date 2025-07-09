@@ -25,6 +25,9 @@ impl Player {
     pub fn play_card(&mut self, card: Card) {
         self.cards.retain(|c| c.0 != card.0)
     }
+    pub fn get_name(&self) -> String {
+        self.name.clone()
+    }
 }
 
 
