@@ -41,7 +41,7 @@ impl Pile {
 
     pub fn play_card(&mut self, card: Card) -> Result<(), String> {
         if !self.can_play_card(card) {
-            Err(format!("Cannot play card {} on pile", card.0))
+            Err(format!("Cannot play card {} on {:?} pile with top {}", card.0, self.direction, self.top.0))
         } else {
             self.top = card;
             Ok(())
