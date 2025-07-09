@@ -30,7 +30,7 @@ fn show_game_state(player_cards: &Vec<Card>, piles: &[Pile; 4]) {
 }
 
 fn play_turn(game: &mut Game) {
-    loop {
+    while game.current_status() == GameResult::InProgress  {
         show_game_state(&game.player.get_cards(), &game.show_piles());
 
         let actions = vec!["Play Card", "End Turn"];
