@@ -34,8 +34,8 @@ impl Pile {
 
    pub fn can_play_card(&self, card: Card) -> bool {
         match self.direction {
-            PileDirection::Ascending => self.top.0 < card.0,
-            PileDirection::Descending => self.top.0 > card.0,
+            PileDirection::Ascending => self.top.0 < card.0 || self.top.0 -10 == card.0,
+            PileDirection::Descending => self.top.0 > card.0 || self.top.0 + 10 == card.0,
         }
     }
 
