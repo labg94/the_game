@@ -1,3 +1,5 @@
+use crate::error::GameError;
+
 const MIN_CARD: u8 = 2;
 const MAX_CARD: u8 = 99;
 pub const HAND_SIZE: usize = 8;
@@ -5,13 +7,13 @@ pub const HAND_SIZE: usize = 8;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Card(pub u8);
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub enum PileDirection {
     Ascending,
     Descending,
 }
 
-#[derive(Debug,Clone)]
+#[derive(Debug, Clone)]
 pub struct Pile {
     pub direction: PileDirection,
     pub top: Card,
@@ -32,16 +34,19 @@ impl Pile {
         }
     }
 
-   pub fn can_play_card(&self, card: Card) -> bool {
+    pub fn can_play_card(&self, card: Card) -> bool {
         match self.direction {
-            PileDirection::Ascending => self.top.0 < card.0 || self.top.0 -10 == card.0,
+            PileDirection::Ascending => self.top.0 < card.0 || self.top.0 - 10 == card.0,
             PileDirection::Descending => self.top.0 > card.0 || self.top.0 + 10 == card.0,
         }
     }
 
-    pub fn play_card(&mut self, card: Card) -> Result<(), String> {
+    pub fn play_card(&mut self, card: Card) -> Result<(), GameError> {
         if !self.can_play_card(card) {
-            Err(format!("Cannot play card {} on {:?} pile with top {}", card.0, self.direction, self.top.0))
+            Err(GameError::InvalidCardPlay(format!(
+                "Cannot play card {} on {:?} pile with top {}",
+                card.0, self.direction, self.top.0
+            )))
         } else {
             self.top = card;
             Ok(())
@@ -78,7 +83,11 @@ mod tests {
     #[test]
     fn test_can_play_card_desc() {
         let pile = Pile::new_desc();
-        assert!(pile.can_play_card(Card(10)), "Couldn't play card 10 on pile desc when top is {}",pile.top.0);
+        assert!(
+            pile.can_play_card(Card(10)),
+            "Couldn't play card 10 on pile desc when top is {}",
+            pile.top.0
+        );
     }
 
     #[test]
@@ -111,13 +120,13 @@ mod tests {
         let result = pile.play_card(Card(9));
         assert!(result.is_err(), "Cannot play card 9 after 10 on asc pile");
     }
-    
+
     #[test]
     fn test_play_card_fail_desc() {
         let mut pile = Pile::new_desc();
         let card = Card(9);
         pile.play_card(card);
         let result = pile.play_card(Card(10));
-        assert!(result.is_err(), "Cannot play card 10 after 9 on desc pile");   
+        assert!(result.is_err(), "Cannot play card 10 after 9 on desc pile");
     }
 }

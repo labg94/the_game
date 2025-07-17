@@ -2,6 +2,7 @@ use crate::domain::board::Board;
 use crate::domain::card::{Card, HAND_SIZE, Pile};
 use crate::domain::game::GameResult::{GameWin, InProgress, PlayerWin};
 use crate::domain::player::Player;
+use crate::error::GameError;
 
 #[derive(Debug, PartialEq)]
 pub enum GameResult {
@@ -33,7 +34,7 @@ impl Game {
         }
     }
 
-    pub fn play_card(&mut self, card: u8, pile: usize) -> Result<(), String> {
+    pub fn play_card(&mut self, card: u8, pile: usize) -> Result<(), GameError> {
         self.board.play_card(Card(card), pile)?;
         self.player.play_card(Card(card));
         self.movements_count += 1;

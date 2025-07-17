@@ -1,6 +1,7 @@
 use crate::domain::card::{Card, Pile};
 use rand::seq::SliceRandom;
 use rand::rng;
+use crate::error::GameError;
 
 #[derive(Debug)]
 pub struct Board {
@@ -28,7 +29,7 @@ impl Board{
 
     }
 
-    pub fn play_card(&mut self, card: Card, pile_position: usize)-> Result<(), String>{
+    pub fn play_card(&mut self, card: Card, pile_position: usize)-> Result<(), GameError>{
         self.piles[pile_position].play_card(card)
     }
 
