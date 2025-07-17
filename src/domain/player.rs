@@ -23,29 +23,26 @@ impl Player {
     }
 
     pub fn play_card(&mut self, card: Card) {
-        self.cards.retain(|c| c.0 != card.0)
+        self.cards.retain(|c| c.value() != card.value())
     }
     pub fn get_name(&self) -> String {
         self.name.clone()
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     pub fn add_cards() {
         let mut player = Player::new("test".to_string());
 
-        let cards = vec![Card(1), Card(2), Card(3)];
+        let cards = vec![Card::of(1), Card::of(2), Card::of(3)];
         player.add_cards(cards);
-        
-        player.play_card(Card(1));
-        
-        assert_eq!(player.get_cards(), vec![Card(2), Card(3)]);
-        
+
+        player.play_card(Card::of(1));
+
+        assert_eq!(player.get_cards(), vec![Card::of(2), Card::of(3)]);
     }
-    
 }

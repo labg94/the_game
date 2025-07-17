@@ -12,7 +12,7 @@ pub struct Board {
 impl Board{
 
     pub fn new()-> Self{
-        let mut deck = (2..=99).map(Card).collect::<Vec<Card>>();
+        let mut deck = (2..=99).map(|number| Card::of(number)).collect::<Vec<Card>>();
         deck.shuffle(&mut rng());
 
         Self{
@@ -73,13 +73,13 @@ mod tests {
 
         let mut board = Board::new();
 
-        board.play_card(Card(90), 0).expect("Error playing card");
-        board.play_card(Card(80), 1).expect("Error playing card");
-        board.play_card(Card(10), 2).expect("Error playing card");
-        board.play_card(Card(11), 3).expect("Error playing card");
+        board.play_card(Card::of(90), 0).expect("Error playing card");
+        board.play_card(Card::of(80), 1).expect("Error playing card");
+        board.play_card(Card::of(10), 2).expect("Error playing card");
+        board.play_card(Card::of(11), 3).expect("Error playing card");
 
 
-        let cards = vec![Card(20), Card(30), Card(40), Card(50)];
+        let cards = vec![Card::of(20), Card::of(30), Card::of(40), Card::of(50)];
 
 
         assert!(!board.any_move_available(cards));
@@ -91,13 +91,13 @@ mod tests {
 
         let mut board = Board::new();
 
-        board.play_card(Card(90), 0).expect("Error playing card");
-        board.play_card(Card(80), 1).expect("Error playing card");
-        board.play_card(Card(10), 2).expect("Error playing card");
-        board.play_card(Card(11), 3).expect("Error playing card");
+        board.play_card(Card::of(90), 0).expect("Error playing card");
+        board.play_card(Card::of(80), 1).expect("Error playing card");
+        board.play_card(Card::of(10), 2).expect("Error playing card");
+        board.play_card(Card::of(11), 3).expect("Error playing card");
 
 
-        let cards = vec![Card(2), Card(30), Card(40), Card(50)];
+        let cards = vec![Card::of(2), Card::of(30), Card::of(40), Card::of(50)];
 
 
         assert!(board.any_move_available(cards));

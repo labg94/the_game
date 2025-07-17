@@ -1,35 +1,39 @@
-use inquire::{Select, Text};
-use colored::Colorize;
 use crate::domain::card::{Card, Pile, PileDirection};
 use crate::domain::game::{Game, GameResult};
+use colored::Colorize;
+use inquire::{Select, Text};
 
 fn show_game_state(player_cards: &Vec<Card>, piles: &[Pile; 4]) {
     println!("\n{}", "=== Current Game State ===".cyan().bold());
 
-    // Show piles with direction and top card
+    // Show piles with their direction and top card
     println!("\n{}", "Piles:".green().bold());
     for (i, pile) in piles.iter().enumerate() {
-        let direction = match pile.direction {
+        let direction = match pile.get_direction() {
             PileDirection::Ascending => "↑ Ascending".bright_green(),
             PileDirection::Descending => "↓ Descending".bright_red(),
         };
-        println!("Pile {}: {} - Top Card: {}", i + 1, direction, pile.top.0);
+        println!(
+            "Pile {}: {} - Top Card: {}",
+            i + 1,
+            direction,
+            pile.get_top()
+        );
     }
 
     // Show player's cards
     println!("\n{}", "Your Cards:".green().bold());
     for card in player_cards.iter() {
-        print!(" ({})", card.0);
+        print!(" ({})", card.value());
     }
     println!();
 }
 
 fn play_turn(game: &mut Game) {
     while game.current_status() == GameResult::InProgress {
-        show_game_state(&game.player.get_cards(), &game.show_piles());
+        show_game_state(&game.player_cards(), &game.show_piles());
 
         let actions = vec!["Play Card", "End Turn"];
-
 
         let choice = if game.can_finish_turn() {
             let choice = Select::new("What would you like to do?", actions)
@@ -44,10 +48,9 @@ fn play_turn(game: &mut Game) {
             "Play Card" => {
                 // Convert cards to strings for selection
                 let card_options: Vec<String> = game
-                    .player
-                    .get_cards()
+                    .player_cards()
                     .iter()
-                    .map(|c| c.0.to_string())
+                    .map(|c| c.value().to_string())
                     .collect();
 
                 // Select a card
@@ -61,11 +64,11 @@ fn play_turn(game: &mut Game) {
                     .iter()
                     .enumerate()
                     .map(|(i, p)| {
-                        let direction = match p.direction {
+                        let direction = match p.get_direction() {
                             PileDirection::Ascending => "↑",
                             PileDirection::Descending => "↓",
                         };
-                        format!("Pile {} {} (Top: {})", i + 1, direction, p.top.0)
+                        format!("Pile {} {} (Top: {})", i + 1, direction, p.get_top())
                     })
                     .collect();
 
@@ -85,7 +88,6 @@ fn play_turn(game: &mut Game) {
                 // Convert selected card string to Card
                 let card_number = selected_card.parse::<u8>().unwrap();
 
-             
                 // Try to play the card
                 if let Err(e) = game.play_card(card_number, pile_index) {
                     println!("{}", e.to_string().bright_red());
@@ -112,10 +114,10 @@ pub fn run() {
         play_turn(&mut game);
     }
 
-    show_game_state(&game.player.get_cards(), &game.show_piles());
+    show_game_state(&game.player_cards(), &game.show_piles());
     match game.current_status() {
         GameResult::PlayerWin => {
-            println!("{} {}", game.player.get_name(), " You win!".bright_green())
+            println!("{} {}", game.player_name(), " You win!".bright_green())
         }
         GameResult::GameWin => {
             println!("{}", "The game win!".bright_red())

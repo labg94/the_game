@@ -13,8 +13,8 @@ pub enum GameResult {
 
 #[derive(Debug)]
 pub struct Game {
-    pub player: Player,
-    pub board: Board,
+    player: Player,
+    board: Board,
     movements_count: u8,
 }
 
@@ -35,8 +35,8 @@ impl Game {
     }
 
     pub fn play_card(&mut self, card: u8, pile: usize) -> Result<(), GameError> {
-        self.board.play_card(Card(card), pile)?;
-        self.player.play_card(Card(card));
+        self.board.play_card(Card::of(card), pile)?;
+        self.player.play_card(Card::of(card));
         self.movements_count += 1;
         Ok(())
     }
@@ -79,6 +79,14 @@ impl Game {
 
     pub fn show_piles(&self) -> [Pile; 4] {
         self.board.piles()
+    }
+    
+    pub fn player_cards(&self) -> Vec<Card> {
+        self.player.get_cards()
+    }
+    
+    pub fn player_name(&self) -> String {
+        self.player.get_name()
     }
 }
 

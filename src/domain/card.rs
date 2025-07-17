@@ -5,7 +5,19 @@ const MAX_CARD: u8 = 99;
 pub const HAND_SIZE: usize = 8;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Card(pub u8);
+pub struct Card(u8);
+
+impl Card {
+    
+    pub fn of(value: u8)-> Self{
+        Self(value)
+    }
+    
+    pub fn value(&self) -> u8 {
+        self.0
+    }
+}
+
 
 #[derive(Debug, Clone)]
 pub enum PileDirection {
@@ -15,8 +27,8 @@ pub enum PileDirection {
 
 #[derive(Debug, Clone)]
 pub struct Pile {
-    pub direction: PileDirection,
-    pub top: Card,
+    direction: PileDirection,
+    top: Card,
 }
 
 impl Pile {
@@ -51,6 +63,14 @@ impl Pile {
             self.top = card;
             Ok(())
         }
+    }
+    
+    pub fn get_direction(&self) -> PileDirection{
+        self.direction.clone()
+    }
+    
+    pub fn get_top(&self) -> u8{
+        self.top.0
     }
 }
 

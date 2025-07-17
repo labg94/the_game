@@ -1,4 +1,4 @@
 pub mod card;
-pub mod board;
-pub mod player;
+mod board;
+mod player;
 pub mod game;
