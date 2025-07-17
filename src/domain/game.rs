@@ -88,6 +88,10 @@ impl Game {
     pub fn player_name(&self) -> String {
         self.player.get_name()
     }
+    
+    pub fn remaining_cards(&self) -> Vec<Card> {
+        self.board.deck()
+    }
 }
 
 #[cfg(test)]

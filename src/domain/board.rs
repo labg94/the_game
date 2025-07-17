@@ -45,6 +45,11 @@ impl Board{
         self.piles.clone()
     }
     
+    pub fn deck(&self) -> Vec<Card>{
+        let mut vec = self.deck.clone();
+        vec.sort_by(|a,b| a.value().cmp(&b.value()));
+        vec
+    }
 }
 
 #[cfg(test)]

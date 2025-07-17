@@ -1,9 +1,11 @@
-use crate::domain::card::{Card, Pile, PileDirection};
+use crate::domain::card::{PileDirection};
 use crate::domain::game::{Game, GameResult};
 use colored::Colorize;
 use inquire::{Select, Text};
 
-fn show_game_state(player_cards: &Vec<Card>, piles: &[Pile; 4]) {
+fn show_game_state(game: &Game) {
+    let player_cards = game.player_cards();
+    let piles = game.show_piles();
     println!("\n{}", "=== Current Game State ===".cyan().bold());
 
     // Show piles with their direction and top card
@@ -22,6 +24,12 @@ fn show_game_state(player_cards: &Vec<Card>, piles: &[Pile; 4]) {
     }
 
     // Show player's cards
+    println!("\n{}", "Remaining Cards:".green().bold());
+    for card in game.remaining_cards().iter() {
+        print!("-{}", card.value());
+    }
+    
+    // Show player's cards
     println!("\n{}", "Your Cards:".green().bold());
     for card in player_cards.iter() {
         print!(" ({})", card.value());
@@ -31,7 +39,7 @@ fn show_game_state(player_cards: &Vec<Card>, piles: &[Pile; 4]) {
 
 fn play_turn(game: &mut Game) {
     while game.current_status() == GameResult::InProgress {
-        show_game_state(&game.player_cards(), &game.show_piles());
+        show_game_state(&game);
 
         let actions = vec!["Play Card", "End Turn"];
 
@@ -114,7 +122,7 @@ pub fn run() {
         play_turn(&mut game);
     }
 
-    show_game_state(&game.player_cards(), &game.show_piles());
+    show_game_state(&game);
     match game.current_status() {
         GameResult::PlayerWin => {
             println!("{} {}", game.player_name(), " You win!".bright_green())
